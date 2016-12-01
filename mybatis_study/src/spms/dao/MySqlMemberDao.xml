@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//MYBATIS.ORG//dtd Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="spms.dao.MemberDao">
+	<resultMap type="member" id="memberResultMap">
+		<id column="mno" property="no" />
+		<result column="email" property="email" />
+		<result column="pwd" property="password" />
+		<result column="mname" property="name" />
+		<result column="cre_date" property="createdDate" javaType="java.sql.Date" />
+		<result column="mod_date" property="modifiedDate" javaType="java.sql.Date" />
+	</resultMap>
+	
+	<select id="selectList" parameterType="map" resultMap="memberResultMap">
+		select mno, mname, email, cre_date from members order by
+		<choose>
+			<when test="orderCond == 'MNAME_ASC'">mname asc</when>
+			<when test="orderCond == 'MNAME_DESC'">mname desc</when>
+			<when test="orderCond == 'EMAIL_ASC'">email asc</when>
+			<when test="orderCond == 'EMAIL_DESC'">email desc</when>
+			<when test="orderCond == 'CREDATE_ASC'">cre_date asc</when>
+			<when test="orderCond == 'CREDATE_DESC'">cre_date desc</when>
+			<when test="orderCond == 'MNO_DESC'">mno desc</when>
+			<otherwise>mno asc</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" parameterType="member">
+		INSERT INTO MEMBERS(EMAIL,PWD,MNAME,CRE_DATE,MOD_DATE)
+		VALUES (#{email},#{password},#{name},NOW(),NOW())
+	</insert>
+	
+	<select id="selectOne" parameterType="int" resultMap="memberResultMap">
+		SELECT MNO,EMAIL,MNAME,CRE_DATE FROM MEMBERS
+		WHERE MNO = #{param}
+	</select>
+	
+	<update id="update" parameterType="map">
+		UPDATE MEMBERS 
+		<set>
+			MOD_DATE = NOW(),
+			<if test="email != null">email = #{email},</if>
+			<if test="name != null">mname = #{name},</if>
+		</set>
+		
+		where MNO=#{no}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		DELETE FROM MEMBERS WHERE MNO= #{param}
+	</delete>
+	
+	<select id="exist" parameterType="member" resultMap="memberResultMap">
+		SELECT MNAME,EMAIL FROM MEMBERS
+		WHERE EMAIL=#{email} AND PWD=#{password}
+	</select>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//MYBATIS.ORG//dtd MAPPER 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="spms.dao.ProjectDao">
+	<resultMap type="project" id="projectResultMap">
+		<id column="PNO" property="no"/>
+		<result column="PNAME" property="title"/>
+		<result column="CONTENT" property="content"/>
+		<result column="STA_DATE" property="startDate" javaType="java.sql.Date"/>
+		<result column="END_DATE" property="endDate" javaType="java.sql.Date"/>
+		<result column="STATE" property="state"/>
+		<result column="CRE_DATE" property="createdDate" javaType="java.sql.Date"/>
+		<result column="TAGS" property="tags"/>
+	</resultMap>
+	
+	<select id="selectList" parameterType="map" resultMap="projectResultMap">
+		select pno, pname, sta_date, end_date, state
+		from projects
+		order by
+		<choose>
+			<when test="orderCond == 'TITLE_ASC'">pname asc</when>
+			<when test="orderCond == 'TITLE_DESC'">pname desc</when>
+			<when test="orderCond == 'STARTDATE_ASC'">STA_DATE asc</when>
+			<when test="orderCond == 'STARTDATE_DESC'">STA_DATE desc</when>
+			<when test="orderCond == 'ENDDATE_ASC'">END_DATE asc</when>
+			<when test="orderCond == 'ENDDATE_DESC'">END_DATE desc</when>
+			<when test="orderCond == 'STATE_ASC'">STATE asc</when>
+			<when test="orderCond == 'STATE_DESC'">STATE desc</when>
+			<when test="orderCond == 'PNO_ASC'">PNO asc</when>
+			<otherwise>PNO desc</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" parameterType="project">
+		insert into PROJECTS(pname,content,sta_date,end_date,state,cre_date,tags)
+		values(#{title},#{content},#{startDate},#{endDate},0,now(),#{tags})
+	</insert>
+	
+	<select id="selectOne" parameterType="int" resultMap="projectResultMap">
+		select pno, pname, content, sta_date, end_date, state, cre_date,tags
+		from projects
+		where pno=#{param}
+	</select>
+	
+	<update id="update" parameterType="map">
+		update PROJECTS
+		<set>
+			<if test="title != null">pname= #{title},</if>
+			<if test="content != null">content= #{content},</if>
+			<if test="startDate != null">sta_date= #{startDate},</if>
+			<if test="endDate != null">end_date= #{endDate},</if>
+			<if test="state != null">state= #{state},</if>
+			<if test="tags != null">tags= #{tags}</if>
+		</set>
+		where pno= #{no}
+ 	</update>
+ 	
+ 	<delete id="dalete" parameterType="int">
+ 		delete from PROJECTS
+ 		where pno= #{param}
+ 	</delete>
+</mapper>
