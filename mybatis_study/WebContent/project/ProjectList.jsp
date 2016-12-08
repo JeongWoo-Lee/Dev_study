@@ -12,7 +12,7 @@
 	<jsp:include page="/Header.jsp" />
 	<h1>프로젝트 목록</h1>
 	<p>
-		<a href='add.do'>신규 프로젝트</a>
+		<a href='add.do'>신규 프로젝트 </a>
 	</p>
 	<table border="1">
 		<tr>
